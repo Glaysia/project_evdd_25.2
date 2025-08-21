@@ -44,9 +44,6 @@ class ProjectSpec:
         for item in inputs:
             name = item.get('name')
             typ = item.get('type')
-            if typ == 'bool':
-                ranges[name] = [0, 1, 1, 0]
-                continue
             minv = item.get('min', 0)
             maxv = item.get('max', 0)
             step = item.get('step', 1 if typ == 'int' else 0.1)
@@ -111,3 +108,24 @@ class ProjectSpec:
             raise ValueError("feature_order validation failed: " + " | ".join(errors))
 
         return True
+
+
+if __name__ == '__main__':
+    import sys
+
+    def _run_validate():
+        """Lightweight self-test for ProjectSpec.validate.
+
+        Usage: python project_manager.py [path_to_project.json]
+        """
+        path_arg = sys.argv[1] if len(sys.argv) > 1 else 'project.json'
+        p = Path(path_arg)
+        try:
+            ok = ProjectSpec.validate(p)
+            print(f"VALID: {ok}")
+            return 0
+        except Exception as e:
+            print("ERROR:", type(e).__name__, str(e))
+            return 1
+
+    raise SystemExit(_run_validate())
