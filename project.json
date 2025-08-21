@@ -168,11 +168,14 @@
     "feature_order": {
       "inputs": [
         "w1_mm","l1_leg_mm","l1_top_mm","l2_mm","h1_mm","l1_center_mm",
-        "Tx_turns_mm","Tx_width_mm","Tx_height_mm","Tx_space_x_mm","Tx_space_y_mm","Tx_preg_mm",
-        "Rx_width_mm","Rx_height_mm","Rx_space_x_mm","Rx_space_y_mm","Rx_preg",
-        "g2_mm","Tx_layer_space_x_mm","Tx_layer_space_y_mm",
-        "volume_mm3","thickness_mm","area_mm2",
-        "Operating_Current_in_A","Magnetizing_Current_in_A","has_pan_bool","pan_blow_mps"
+        "Tx_turns","Tx_width_mm","Tx_height_mm","Tx_space_x_mm","Tx_space_y_mm","Tx_preg_mm",
+        "Tx_layer_space_x_mm","Tx_layer_space_y_mm",
+        "Rx_turns","Rx_width_mm","Rx_height_mm","Rx_space_x_mm","Rx_space_y_mm","Rx_preg_mm",
+        "Rx_layer_space_x_mm","Rx_layer_space_y_mm",
+        "g1_mm","g2_mm",
+        "core_x_mm","core_y_mm","core_z_mm","core_volume_mm3","core_area_mm2","core_thickness_mm",
+        "total_x_mm","total_y_mm","total_z_mm","total_volume_mm3","total_area_mm2","total_thickness_mm",
+        "Operating_Current_in_A","Magnetizing_Current_in_A","freq_kHz","has_pan_bool","pan_blow_mps"
       ],
       "outputs": [
         "Ltx_uH","Lrx1_uH","Lrx2_uH","M1_ratio","M2_ratio","k1_ratio","k2_ratio",

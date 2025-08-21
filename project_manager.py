@@ -11,7 +11,7 @@ from decimal import Decimal
 class ProjectSpec:
 
     @staticmethod
-    def load(json_path: Path):
+    def load(json_path: Path = 'project.json'):
         with open(str(json_path), 'r', encoding='utf-8') as f:
             return json.load(f)
 
@@ -58,3 +58,56 @@ class ProjectSpec:
     def constraint_strs(json_path: Path):
         data = ProjectSpec.load(json_path)
         return data.get('optimization', {}).get('constraint_strs', [])
+
+    @staticmethod
+    def validate(json_path: Path) -> bool:
+        """
+        Validate project.json consistency.
+
+        First check: ensure the variable names listed under
+        variables.feature_order (inputs/outputs) match exactly the names
+        defined under variables.inputs / variables.outputs (order-agnostic).
+
+        Returns True when valid, otherwise raises ValueError with details.
+        """
+        data = ProjectSpec.load(json_path)
+
+        variables = data.get('variables', {}) or {}
+        feature_order = variables.get('feature_order', {}) or {}
+
+        # Collect declared names
+        declared_inputs = {it.get('name') for it in variables.get('inputs', []) if isinstance(it, dict) and it.get('name')}
+        declared_outputs = {it.get('name') for it in variables.get('outputs', []) if isinstance(it, dict) and it.get('name')}
+
+        # Collect feature_order names
+        fo_inputs = set(feature_order.get('inputs', []) or [])
+        fo_outputs = set(feature_order.get('outputs', []) or [])
+
+        errors = []
+
+        # Inputs diff
+        miss_in_fo_inputs = sorted(declared_inputs - fo_inputs)
+        extra_in_fo_inputs = sorted(fo_inputs - declared_inputs)
+        if miss_in_fo_inputs or extra_in_fo_inputs:
+            parts = []
+            if miss_in_fo_inputs:
+                parts.append(f"missing_in_feature_order_inputs={miss_in_fo_inputs}")
+            if extra_in_fo_inputs:
+                parts.append(f"extra_in_feature_order_inputs={extra_in_fo_inputs}")
+            errors.append("inputs mismatch: " + "; ".join(parts))
+
+        # Outputs diff
+        miss_in_fo_outputs = sorted(declared_outputs - fo_outputs)
+        extra_in_fo_outputs = sorted(fo_outputs - declared_outputs)
+        if miss_in_fo_outputs or extra_in_fo_outputs:
+            parts = []
+            if miss_in_fo_outputs:
+                parts.append(f"missing_in_feature_order_outputs={miss_in_fo_outputs}")
+            if extra_in_fo_outputs:
+                parts.append(f"extra_in_feature_order_outputs={extra_in_fo_outputs}")
+            errors.append("outputs mismatch: " + "; ".join(parts))
+
+        if errors:
+            raise ValueError("feature_order validation failed: " + " | ".join(errors))
+
+        return True
